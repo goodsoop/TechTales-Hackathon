@@ -1,0 +1,11 @@
+print("Please choose a mode:\nType C for 'Alphabet Ally'\nType V for 'function_v'\nType S for 'function_v'\nType Z for 'function_Z'\n")
+mode = input()
+if mode == "C":
+    Alphabet_Ally()
+if mode == "V":
+    #Vanessa's functio goes here
+if mode == "S":
+    Selorm's function goes here
+if mode == "Z":
+    #Zoe's function goes here
+        
