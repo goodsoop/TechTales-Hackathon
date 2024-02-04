@@ -97,6 +97,17 @@ def Word_spell():
     
     #choose random picture
     #chosen_picture,word = random.choice(list(image_collection.items()))
+    #Show given image
+    image_key = random.choice(list(image_collection.keys()))
+    image_choice = pygame.image.load(image_key)
+    image_choice = pygame.transform.scale(image_choice, (300, 300))
+    main_screen.blit(image_choice, (250, 140))
+    pygame.display.update()
+
+    # word corresponding with image
+    word = image_collection[image_key]
+
+    tries = 3
     while True:
         
 
@@ -112,13 +123,7 @@ def Word_spell():
         main_screen.blit(Word_spell_text, Word_spell_rect)
 
         
-        #Show given image
-        image_key = random.choice(list(image_collection.keys()))
-        image_choice = pygame.image.load(image_key)
-        image_choice = pygame.transform.scale(image_choice, (300, 300))  # Adjust the size as needed
-        main_screen.blit(image_choice,(250,140))
-        # word corresponding with image
-        word = image_collection[image_key]
+        
 
 
         #Display Quit button
@@ -128,7 +133,8 @@ def Word_spell():
 
         
 
-        
+        main_screen.blit(image_choice, (250, 140))
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -143,18 +149,28 @@ def Word_spell():
                    main_screen.blit(image_choice,(280,400))
                    pygame.display.update()
                    pygame.time.delay(1000)
-                   word = random.choice(list(image_collection.values()))
-               else:
+                   image_key = random.choice(list(image_collection.keys()))
+                   image_choice =  pygame.image.load(image_key)
+                   image_choice =  pygame.transform.scale(image_choice, (300, 300))
+                   main_screen.blit(image_choice, (250, 140))
+                   word =image_collection[image_key]
                    tries = 3
-                   image_choice = pygame.image.load("Incorrect.png")
-                   image_choice = pygame.transform.scale(image_choice, (100, 100))  # Adjust the size as needed
-                   main_screen.blit(image_choice,(280,400))
+               else:
+                   
+                   incorrect = pygame.image.load("Incorrect.png")
+                   incorrect = pygame.transform.scale(incorrect, (100, 100))  # Adjust the size as needed
+                   main_screen.blit(incorrect,(280,400))
                    pygame.display.update()
                    pygame.time.delay(1000)
                    tries -=1
                    if tries == 0:
+                       
+                       image_key = random.choice(list(image_collection.keys()))
+                       image_choice =  pygame.image.load(image_key)
+                       image_choice =  pygame.transform.scale(image_choice, (300, 300))
+                       main_screen.blit(image_choice, (250, 140))
+                       word = image_collection[image_key]
                        tries = 3
-                       word = random.choice(list(image_collection.values()))
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if Word_Spell_Back_Bttn.check_if_clicked(word_spell_mous_pos):
