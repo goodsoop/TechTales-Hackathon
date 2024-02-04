@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 import cv2
+import pygame_gui
 import sys
 # initialize pygame
 pygame.init()
@@ -16,85 +17,152 @@ text_font = pygame.font.SysFont("Arial",20)
 white = (255, 255, 255)
 black = (0, 0, 0)
 
-# Set up fonts
 
 
 
 
 
 class Game_Button():
-	def __init__(self, image, coordinates, game_name, font, button_color, highlight_color):
-		self.image = image
-		self.x_pos = coordinates[0]
-		self.y_pos = coordinates[1]
-		self.font = font
-		self.base_color, self.hovering_color = button_color, highlight_color
-		self.text_input = game_name
-		self.text = self.font.render(self.text_input, True, self.base_color)
-		if self.image is None:
-			self.image = self.text
-		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
-		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+    def __init__(self, image, coordinates, game_name, font, button_color, highlight_color):
+        self.image = image
+        self.x_pos = coordinates[0]
+        self.y_pos = coordinates[1]
+        self.font = font
+        self.base_color, self.hovering_color = button_color, highlight_color
+        self.text_input = game_name
+        self.text = self.font.render(self.text_input, True, self.base_color)
+        if self.image is None:
+            self.image = self.text
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+        self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
 
-	def display_button(self, screen):
-		if self.image is not None:
-			screen.blit(self.image, self.rect)
-		screen.blit(self.text, self.text_rect)
+    def display_button(self, screen):
+        if self.image is not None:
+            screen.blit(self.image, self.rect)
+        screen.blit(self.text, self.text_rect)
 
-	def check_if_clicked(self, position):
-		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-			return True
-		return False
+    def check_if_clicked(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            return True
+        return False
 
-	def Highlight_button(self, position):
-		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-			self.text = self.font.render(self.text_input, True, self.hovering_color)
-		else:
-			self.text = self.font.render(self.text_input, True, self.base_color)
+    def Highlight_button(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            self.text = self.font.render(self.text_input, True, self.hovering_color)
+        else:
+            self.text = self.font.render(self.text_input, True, self.base_color)
 
+#this checks if user input is correct or not and shows corresponding image on correctness
+# def Word_Spell_Check(user_input,correct_word):
+#      while True:
+        
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#                 sys.exit()
 
+#         if user_input == correct_word:
+#             image_choice = pygame.image.load("Correct.png")
+#             image_choice = pygame.transform.scale(image_choice, (100, 100))  # Adjust the size as needed
+#             main_screen.blit(image_choice,(280,400))
+#             pygame.display.update()
+#             pygame.time.delay(600)
+#             return
+#         elif user_input != correct_word:
+#             image_choice = pygame.image.load("Incorrect.png")
+#             image_choice = pygame.transform.scale(image_choice, (100, 100))  # Adjust the size as needed
+#             main_screen.blit(image_choice,(280,400))
+#             pygame.display.update()
+#             pygame.time.delay(600)
+#             return
+       
 
+        
 
 def Word_spell():
-    user_input = ""
-    input_rectangle = pygame.Rect(150,500, 200,32)
-    color = pygame.Color("lightskyblue3")
+    
+    clock = pygame.time.Clock()
+    
+
+    #gui manager for text input
+    manager = pygame_gui.UIManager((screen_width, screen_height))
+    
+    
+    #Create text input line with cursor
+    text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((100, 450), (150, 30)), manager=manager, object_id='#main_text_entry')
+    UI_REFRESH_RATE = clock.tick(60)/1000
+
+    #dictionary for possible images
+    image_collection = {"test.png":"ball","Button.png":"bat","other1.png":"other"}
+    
+    #choose random picture
+    #chosen_picture,word = random.choice(list(image_collection.items()))
     while True:
+        
+
+
         word_spell_mous_pos = pygame.mouse.get_pos()
 
-        main_screen.fill("black")
+        main_screen.fill("white")
 
-        Word_spell_text = text_font.render("Spell the name of the given object", True, "White")
+        Word_spell_text = text_font.render("Spell the name of the given object", True, "Black")
 
         #Display Game prompt
         Word_spell_rect = Word_spell_text.get_rect(center=(400, 100))
         main_screen.blit(Word_spell_text, Word_spell_rect)
-    
+
+        
+        #Show given image
+        image_key = random.choice(list(image_collection.keys()))
+        image_choice = pygame.image.load(image_key)
+        image_choice = pygame.transform.scale(image_choice, (300, 300))  # Adjust the size as needed
+        main_screen.blit(image_choice,(250,140))
+        # word corresponding with image
+        word = image_collection[image_key]
+
 
         #Display Quit button
-        Word_Spell_Back_Bttn = Game_Button(image=None, coordinates = (640, 460),game_name="QUIT", font=text_font, button_color="White", highlight_color="Green")
+        Word_Spell_Back_Bttn = Game_Button(image=None, coordinates = (640, 460),game_name="QUIT", font=text_font, button_color="Black", highlight_color="Green")
         Word_Spell_Back_Bttn.Highlight_button(word_spell_mous_pos)
         Word_Spell_Back_Bttn.display_button(main_screen)
+
+        
+
+        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
-                    user_input = user_input[0:-1]
-                else:
-                    user_input += event.unicode
-
-
+            manager.process_events(event)
+                
+            if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#main_text_entry'):
+               if event.text == word:
+                   image_choice = pygame. image.load( "Correct.png") 
+                   image_choice = pygame.transform.scale(image_choice, (100, 100))  # Adjust the size as needed
+                   main_screen.blit(image_choice,(280,400))
+                   pygame.display.update()
+                   pygame.time.delay(1000)
+                   word = random.choice(list(image_collection.values()))
+               else:
+                   tries = 3
+                   image_choice = pygame.image.load("Incorrect.png")
+                   image_choice = pygame.transform.scale(image_choice, (100, 100))  # Adjust the size as needed
+                   main_screen.blit(image_choice,(280,400))
+                   pygame.display.update()
+                   pygame.time.delay(1000)
+                   tries -=1
+                   if tries == 0:
+                       tries = 3
+                       word = random.choice(list(image_collection.values()))
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if Word_Spell_Back_Bttn.check_if_clicked(word_spell_mous_pos):
                     main()
-        pygame.draw.rect(main_screen, color, input_rectangle,2)
-        text_surface = text_font.render(user_input,True,white)
-        main_screen.blit(text_surface,(input_rectangle.x + 5 ,input_rectangle.y + 5))
-        input_rectangle.w = max(100, text_surface.get_width() + 10)
-        pygame.display.flip()
+        manager.update(UI_REFRESH_RATE)
+        manager.draw_ui(main_screen)
+            
+        pygame.display.update()
 
 
 
@@ -149,4 +217,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
