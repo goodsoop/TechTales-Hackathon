@@ -93,7 +93,7 @@ def Word_spell():
     UI_REFRESH_RATE = clock.tick(60)/1000
 
     #dictionary for possible images
-    image_collection = {"test.png":"ball","Button.png":"bat","other1.png":"other"}
+    image_collection = {"House.png":"house","door.png":"door","Apple.png":"apple"}
     
     #choose random picture
     #chosen_picture,word = random.choice(list(image_collection.items()))
@@ -202,7 +202,7 @@ def main():
 
         # Please create your game buttons using the this format
         # game_name_here = Game_Button(pygame.image.load("your_button_icon"),(x,y),"The name of your game here",text_font,"Blue","Green")
-        Word_Spell_button = Game_Button(pygame.image.load("Button.png"),(200,200),"Word Spell",text_font,"Blue","Green")
+        Word_Spell_button = Game_Button(pygame.image.load("button.png"),(200,200),"Word Spell",text_font,"Blue","Green")
 
         main_screen.blit(menu,menu_rectangle)
 
