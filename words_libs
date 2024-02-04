@@ -1,0 +1,53 @@
+from random import randint
+from gtts import gTTS
+
+# Introductory Message
+print("Welcome to the Mad Libs Generator!")
+print("Follow the hints given to create a story!")
+print("Have fun!!!")
+
+# Randomising stories for user
+story_choice = randint(1,3)
+choices = ["family", "home", "friends"]
+story_player = choices[story_choice - 1]
+
+# Getting input from the player
+if story_player == "family":  
+  family_1 = input("\n A group of people you normally live with: ")  #family
+  family_2 = input("The opposite of hate: ") #love
+  family_3 = input("Animals kept in our homes: ") #pets
+  family_4 = input("Fingers are to hands as ___ are to feet: ") #toes
+  family_5 = input("A six-letter word which means all the time: ") #always  
+  story = (f"{family_1} is important. They do not have to be directly related to be family. You may not always like them, but you should always {family_2} them. They are humans after all- or not, {family_3} inclusive, and may step on your {family_4}. Through it all there is one sure thing, they will {family_5} be there for you!")
+ 
+elif story_player == "home": 
+  home_1 = input("\n The place where you stay. Rhymes with gnome: ") #Home
+  home_2 = input("Another word for stay that rhymes with give: ") #live
+  home_3 = input("You feel ___ when you're not afraid: ") #safe
+  home_4 = input("Adverb form of important: ") #importantly
+  home_5 = input("A place where a lot of thinking goes on: ") #mind
+  story = (f"{home_1}. Quite a number of people refer to where they {home_2} as home. Some also identify them as places where they feel {home_3}, and can be themselves. But most {home_4}, home could also be a person. Someone who always makes sure you're okay. Does anyone come to {home_5}?")
+  
+elif story_player == "friends":  
+  friends_1 = input("\n Those you tend to do a lot of things with: ") #friends
+  friends_2 = input("___ and twos: ") #ones
+  friends_3 = input("What you do when you're happy :) : ") #smile
+  friends_4 = input("The ___ of Tom Sawyer: ") #adventures
+  friends_5 = input("Plural of memory: ") #memories
+  story = (f"{friends_1}. They come and go, but some seem to stay for a lifetime. {friends_2} that you go through the ups and downs of life with. They see you {friends_3}, cry and even embarass yourself! So many wonderful {friends_4} taken together. Even if broken up, the {friends_5} made will forever be held dear.")
+
+#Actual Stories
+# Family is important. They do not have to be directly related to be family. You may not always like them, but you should always love them. They are humans after all- or not, pets inclusive, and may step on your toes. Through it all there is one sure thing, they will always be there for you!
+
+#Home. Quite a number of people refer to where they live as home. Some also identify them as places where they feel safe, and can be themselves. But most importantly, home could also be a person. Someone who always makes sure you're okay. Does anyone come to mind?
+
+#Friends. They come and go, but some seem to stay for a lifetime. Ones that you go through the ups and downs of life with. They see you smile, cry and even embarass yourself! So many wonderful adventures taken together. Even if broken up, the memories made will forever be held dear.
+
+# Prints out the story with the player's input
+player_output = story
+print("") #just to createan empty line
+print(player_output)
+
+# Plays the mp3 file
+tts = gTTS(player_output)
+tts.save("player_output.mp3")
