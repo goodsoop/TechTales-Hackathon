@@ -1,0 +1,152 @@
+import pygame
+import time
+import random
+import cv2
+import sys
+# initialize pygame
+pygame.init()
+
+# screen setup
+screen_width = 800
+screen_height = 600
+main_screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("TechTales")
+text_font = pygame.font.SysFont("Arial",20)
+# colours for the game (can be changed)
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+# Set up fonts
+
+
+
+
+
+class Game_Button():
+	def __init__(self, image, coordinates, game_name, font, button_color, highlight_color):
+		self.image = image
+		self.x_pos = coordinates[0]
+		self.y_pos = coordinates[1]
+		self.font = font
+		self.base_color, self.hovering_color = button_color, highlight_color
+		self.text_input = game_name
+		self.text = self.font.render(self.text_input, True, self.base_color)
+		if self.image is None:
+			self.image = self.text
+		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+
+	def display_button(self, screen):
+		if self.image is not None:
+			screen.blit(self.image, self.rect)
+		screen.blit(self.text, self.text_rect)
+
+	def check_if_clicked(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			return True
+		return False
+
+	def Highlight_button(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			self.text = self.font.render(self.text_input, True, self.hovering_color)
+		else:
+			self.text = self.font.render(self.text_input, True, self.base_color)
+
+
+
+
+def Word_spell():
+    user_input = ""
+    input_rectangle = pygame.Rect(150,500, 200,32)
+    color = pygame.Color("lightskyblue3")
+    while True:
+        word_spell_mous_pos = pygame.mouse.get_pos()
+
+        main_screen.fill("black")
+
+        Word_spell_text = text_font.render("Spell the name of the given object", True, "White")
+
+        #Display Game prompt
+        Word_spell_rect = Word_spell_text.get_rect(center=(400, 100))
+        main_screen.blit(Word_spell_text, Word_spell_rect)
+    
+
+        #Display Quit button
+        Word_Spell_Back_Bttn = Game_Button(image=None, coordinates = (640, 460),game_name="QUIT", font=text_font, button_color="White", highlight_color="Green")
+        Word_Spell_Back_Bttn.Highlight_button(word_spell_mous_pos)
+        Word_Spell_Back_Bttn.display_button(main_screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    user_input = user_input[0:-1]
+                else:
+                    user_input += event.unicode
+
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if Word_Spell_Back_Bttn.check_if_clicked(word_spell_mous_pos):
+                    main()
+        pygame.draw.rect(main_screen, color, input_rectangle,2)
+        text_surface = text_font.render(user_input,True,white)
+        main_screen.blit(text_surface,(input_rectangle.x + 5 ,input_rectangle.y + 5))
+        input_rectangle.w = max(100, text_surface.get_width() + 10)
+        pygame.display.flip()
+
+
+
+
+
+
+def main():
+    running = True
+
+    while running:
+        main_screen.blit(pygame.image.load("Background.png"),(0,0))
+
+        position_of_mouse = pygame.mouse.get_pos()
+
+        menu = text_font.render("Choose a game", True, "#b68f40")
+        menu_rectangle = menu.get_rect(center=(400,100))
+
+        #push text onto main screen
+        
+
+
+        # Please create your game buttons using the this format
+        # game_name_here = Game_Button(pygame.image.load("your_button_icon"),(x,y),"The name of your game here",text_font,"Blue","Green")
+        Word_Spell_button = Game_Button(pygame.image.load("Button.png"),(200,200),"Word Spell",text_font,"Blue","Green")
+
+        main_screen.blit(menu,menu_rectangle)
+
+        #This displays button on screen
+        Word_Spell_button.display_button(main_screen)
+
+        #This highlights the button text when the mouse hovers over button
+        Word_Spell_button.Highlight_button(position_of_mouse)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #create all if statements for function/game calls
+                if Word_Spell_button.check_if_clicked(position_of_mouse):
+                    Word_spell() # this can be erased and replaced with function call
+                    
+                else:
+                    break
+                    # put name of game here
+
+        # update the display
+        pygame.display.update()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
+
