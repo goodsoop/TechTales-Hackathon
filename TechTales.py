@@ -2,159 +2,225 @@ import os
 import sys
 import pygame
 import time
-
-# initialize pygame
-pygame.init()
-
-# screen setup
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("TechTales")
-
+import random 
+# GLOBALS 
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 # colours for the game (can be changed)
 white = (255, 255, 255)
 black = (0, 0, 0)
 
-# Set up fonts
-font = pygame.font.Font(None, 36)
-test_font = pygame.font.SysFont('Comic Sans MS', 30) 
+class Scene(object): # virtual class 
+    def __init__(self):
+        pass
 
-# entire range of pictures
-index = 0 # changes during gameplay 
-img_list = ["tv.png", "dog.png", "airplane.png"]
-SIZE = len(img_list)-1 
+    def render(self, screen):
+        raise NotImplementedError
 
-# matching sounds to letters
-# will need to set up these sounds
-# letter_sounds = {
-#     'a': 'sounds/a_sound.wav',
-#     'b': 'sounds/b_sound.wav',
-#     'c': 'sounds/c_sound.wav',
-#     'd': 'sounds/d_sound.wav',
-#     'e': 'sounds/e_sound.wav',
-#     'f': 'sounds/f_sound.wav',
-#     'g': 'sounds/g_sound.wav',
-#     'h': 'sounds/h_sound.wav',
-#     'i': 'sounds/i_sound.wav',
-#     'j': 'sounds/j_sound.wav',
-#     'k': 'sounds/k_sound.wav',
-#     'l': 'sounds/l_sound.wav',
-#     'm': 'sounds/m_sound.wav',
-#     'n': 'sounds/n_sound.wav',
-#     'o': 'sounds/o_sound.wav',
-#     'p': 'sounds/p_sound.wav',
-#     'q': 'sounds/q_sound.wav',
-#     'r': 'sounds/r_sound.wav',
-#     's': 'sounds/s_sound.wav',
-#     't': 'sounds/t_sound.wav',
-#     'u': 'sounds/u_sound.wav',
-#     'v': 'sounds/v_sound.wav',
-#     'w': 'sounds/w_sound.wav',
-#     'x': 'sounds/x_sound.wav',
-#     'y': 'sounds/y_sound.wav',
-#     'z': 'sounds/z_sound.wav',
-# }
+    def update(self):
+        raise NotImplementedError
 
-# function to play sounds 
-# need sounds folder to run this
-# def play_sound(letter):
-#     """ this function will play the sound of the letter passed as an argument
-#     args:
-#         letter (str): inputted letter to play the sound of
-#     """
-#     sound_path = letter_sounds.get(letter)
-#     if sound_path:
-#         pygame.mixer.Sound(sound_path).play()
-def img_border():
-    frame_rect = pygame.Rect(250, 100, 300, 300)
-    pygame.draw.rect(screen, black, frame_rect, 300)
+    def handle_events(self, events):
+        raise NotImplementedError
+    
+class SceneHandler(object):
+    def __init__(self):
+        # 1st STATE
+        self.go_to(TitleScreen())
 
-def draw_text(word): # will be list later 4 each respective image 
-    text_surface = test_font.render(word, False, (0, 0, 0))
-    screen.blit(text_surface, (screen_width/2,screen_height-100))
+    def go_to(self, scene):
+        self.scene = scene
+        self.scene.manager = self
 
-def draw_arrow():
-    vertices = ((50, 70),(70,70),(70,50),(90, 80),(70, 110),(70, 90),(50, 90))            
-    pygame.draw.lines(screen, pygame.Color("red"), True, vertices, 1)
- 
-def change_img():
-    global index 
-    if (index >= SIZE):
-        index = 0 # RESET 
-    i = index + 1
-    index = index + 1
-    print(i)
-    name = img_list[i]
-    myimg, myrect = load_image(name)
-    screen.blit(myimg, myrect) # draw
+class TitleScreen(object): # TITLE SCENE / MAIN MENU
+    def __init__(self):
+        super(TitleScreen, self).__init__()
+        # Set up fonts
+        self.text_font = pygame.font.SysFont("Arial", 36)
+        # game_name_here = Game_Button(pygame.image.load("your_button_icon"),(x,y),"The name of your game here",text_font,"Blue","Green")
+        button1 = Game_Button(pygame.image.load("Button.png"),(200,200),"Game1",self.text_font,"Blue","Green")
+        button2 = Game_Button(pygame.image.load("Button.png"), (200, 320), "Flash Cards", self.text_font, "Blue", "Red")
+        self.game1_button = button1 
+        self.game2_button = button2
 
-def check_click(self, mouse):
-        if self.collidepoint(mouse):
-            change_img() 
-            print("hit RED")
+    def render(self, main_screen):
+        main_screen.fill(white)
+        main_screen.blit(pygame.image.load("Background.png"),(0,0))
+        menu = self.text_font.render("Choose a game", True, "#b68f40")
+        menu_rectangle = menu.get_rect(center=(400,100))
+        #push text onto main screen
+        main_screen.blit(menu,menu_rectangle)       
+        # This displays button on screen
+        self.game1_button.display_button(main_screen)
+        self.game2_button.display_button(main_screen)
+        #This highlights the button text when the mouse hovers over button
+        self.game1_button.Highlight_button(self.position_of_mouse)
+        self.game2_button.Highlight_button(self.position_of_mouse)
 
-def load_image(name, colorkey=None): # where name = 'image.png'
-    fullname = os.path.join('pictures', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error:
-        print ("Cannot load image:", name)
-        raise SystemExit
-    image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0,0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    img_rect = image.get_rect(topleft = (200,100))
-    return image, img_rect
+    def update(self):
+        pass 
 
-def main():
-    running = True
-    input_text = ""
-    # load assets
-    file_path = img_list[index] #tv/dog/airplane.png
-    img, img_rect = load_image(file_path)
-    # preset word 4 testing
-    words = ["TV", "DOG", "AIRPLANE"]; 
+    def handle_events(self, events):
+        pos_of_mos = pygame.mouse.get_pos()
+        self.position_of_mouse = pos_of_mos
 
-    while running:
-        for event in pygame.event.get():
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # create all if statements for function/game calls
+                if self.game1_button.check_if_clicked(self.position_of_mouse):
+                    print('Button clicked')
+                if self.game2_button.check_if_clicked(self.position_of_mouse):
+                    print('Launching flash cards game .... ')
+                    # CREATE CLASS 4 FLASH CARDS & LOAD ASSESTS
+                    words = ["TV", "DOG", "AIRPLANE"];  # WORDS 
+                    img_list = ["tv.png", "dog.png", "airplane.png"] # FILE PATH 
+                    self.manager.go_to(Flash_Cards(img_list, words))
+                else:
+                    break
+                    # put name of game here
+
+class GameScene(Scene): # instance of buttons -> Game1, Game2, etc... 
+    def __init__(self, button): # initialize pygame
+        super(GameScene, self).__init__()
+
+    def render(self, window):
+        pass
+
+    def update(self):
+        pass
+
+    def handle_events(self, event):
+        pass
+
+class Game_Button():
+	def __init__(self, image, coordinates, game_name, font, button_color, highlight_color):
+		self.image = image
+		self.x_pos = coordinates[0]
+		self.y_pos = coordinates[1]
+		self.font = font
+		self.base_color, self.hovering_color = button_color, highlight_color
+		self.text_input = game_name
+		self.text = self.font.render(self.text_input, True, self.base_color)
+		if self.image is None:
+			self.image = self.text
+		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+
+	def display_button(self, screen):
+		if self.image is not None:
+			screen.blit(self.image, self.rect)
+		screen.blit(self.text, self.text_rect)
+
+	def check_if_clicked(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			return True
+		return False
+
+	def Highlight_button(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			self.text = self.font.render(self.text_input, True, self.hovering_color)
+		else:
+			self.text = self.font.render(self.text_input, True, self.base_color)
+
+class Flash_Cards(Scene): # NEW SCENE -> had to be custom & not apart of game scene
+    def __init__(self, lst, words_list): # entire range of pictures
+        self.test_font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.index = 0 # changes during gameplay 
+        self.img_list = lst
+        self.SIZE = len(lst)-1 
+        self.word_list = words_list
+
+    def get_lst(self):
+        return self.img_list[self.index]
+        
+    def draw_text(self, word): # will be list later 4 each respective image 
+        text_surface = self.test_font.render(word, False, (0, 0, 0))
+        return text_surface
+ 
+    def get_index(self):
+        if (self.index >= self.SIZE):
+            self.index = 0 # RESET 
+        else:
+            self.index = self.index + 1
+        return self.index
+
+    def check_click(self, hitbox, mouse):
+        if hitbox.collidepoint(mouse):
+            self.get_index() 
+            print("hit RED")
+
+    def load_image(self, name, colorkey=None): # where name = 'image.png'
+        fullname = os.path.join('pictures', name)
+        try:
+            image = pygame.image.load(fullname)
+        except pygame.error:
+            print ("Cannot load image:", name)
+            raise SystemExit
+        image = image.convert()
+        if colorkey is not None:
+            if colorkey is -1:
+                colorkey = image.get_at((0,0))
+                image.set_colorkey(colorkey, RLEACCEL)
+        img_rect = image.get_rect(topleft = (200,100))
+        return image, img_rect
+    
+    def update(self):
+        pass
+
+    def render(self, main_screen): #  - - - RENDER - -- - -
+        frame_rect = pygame.Rect(250, 100, 300, 300)
+        pygame.draw.rect(main_screen, black, frame_rect, 300)
+        #main_screen.blit(pygame.image.load("Background.png"),(0,0))
+        main_screen.fill(white)
+        # draw_arrow()
+        vertices = ((50, 70),(70,70),(70,50),(90, 80),(70, 110),(70, 90),(50, 90))            
+        pygame.draw.lines(main_screen, pygame.Color("red"), True, vertices, 1)
+        # img border
+        frame_rect = pygame.Rect(250, 100, 300, 300)
+        pygame.draw.rect(main_screen, black, frame_rect, 300)
+        # RENDER IMG 
+        ts = self.draw_text(self.word_list[self.index])
+        main_screen.blit(ts, (SCREEN_WIDTH/2,SCREEN_HEIGHT-100))
+        # load assets
+        # name = img_list[i] ; i = get_index() 
+        file_path_str = self.get_lst()
+        img, img_rect = self.load_image(file_path_str)
+        main_screen.blit(img, img_rect)
+
+    def handle_events(self, events):
+        position_of_mouse = pygame.mouse.get_pos()
+        for event in events:
+#            if pygame.event.get(pygame.QUIT):
+#                self.manager.go_to(TitleScene())
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 hitbox = pygame.Rect(50, 70, 50, 110)
-                check_click(hitbox, event.pos)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    # after the enter key is pressed, play the sound for the entered word
-                    for letter in input_text:
-                        play_sound(letter)
-                        time.sleep(0.5)  # add a short delay between sounds
-                    input_text = ""
-                elif event.key == pygame.K_BACKSPACE:
-                    # case for backspace key
-                    input_text = input_text[:-1]
-                else: # add pressed key to the input text
-                    input_text += event.unicode
-     
+                self.check_click(hitbox, position_of_mouse)
+
+def main():
+    RUNNING = True
+    input_text = ""
+    pygame.init()
+
+    # screen setup
+    MAIN_SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("TechTales")
+    clock = pygame.time.Clock()
+    handler = SceneHandler()
+    while RUNNING:
+        clock.tick(60) 
+
+        # process input 
+        handler.scene.handle_events(pygame.event.get())
         # clear screen
-        screen.fill(white)
-
-        # display the input text on the screen
-        text = font.render(input_text, True, black)
-        screen.blit(text, (10, 10))
-        
-        # render arrow + text + pic 
-        draw_arrow()
-        img_border()
-        draw_text(words[index])
-        screen.blit(img, img_rect)
-
+        handler.scene.render(MAIN_SCREEN)                
         # update the display
-        pygame.display.flip()
+        handler.scene.update()
+
+        pygame.display.update()
 
     pygame.quit()
 
 if __name__ == "__main__":
-    main()
+    main() 
