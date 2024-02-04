@@ -232,6 +232,68 @@ def Word_spell():
 
 
 
+class WordMatchGame():
+    def __init__(self):
+        self.words_and_images = {
+            "cat": "cat.png",
+            "dog": "dog.png",
+            "tree": "tree.png",
+            "house": "house.png",
+            "book": "book.png"
+        }
+
+        self.current_word = None
+        self.shuffle_words()
+
+    def shuffle_words(self):
+        self.words = list(self.words_and_images.keys())
+        random.shuffle(self.words)
+        self.current_word = self.words[0]
+
+    def display_word_image(self):
+        image_key = self.words_and_images[self.current_word]
+        image_choice = pygame.image.load(image_key)
+        image_choice = pygame.transform.scale(image_choice, (300, 300))
+        main_screen.blit(image_choice, (250, 140))
+
+    def Word_Match(self):
+        clock = pygame.time.Clock()
+        manager = pygame_gui.UIManager((screen_width, screen_height))
+        UI_REFRESH_RATE = clock.tick(60) / 1000
+
+        word_match_mous_pos = pygame.mouse.get_pos()
+
+        while True:
+            main_screen.fill(white)
+
+            Word_Match_text = text_font.render("Match the word with the correct image", True, black)
+            Word_Match_rect = Word_Match_text.get_rect(center=(400, 100))
+            main_screen.blit(Word_Match_text, Word_Match_rect)
+
+            self.display_word_image()
+
+            # Display Quit button
+            Word_Match_Back_Bttn = Game_Button(image=None, coordinates=(640, 460), game_name="QUIT",
+                                               font=text_font, button_color="Black", highlight_color="Green")
+            Word_Match_Back_Bttn.Highlight_button(word_match_mous_pos)
+            Word_Match_Back_Bttn.display_button(main_screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                manager.process_events(event)
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if Word_Match_Back_Bttn.check_if_clicked(word_match_mous_pos):
+                        main()
+            manager.update(UI_REFRESH_RATE)
+            manager.draw_ui(main_screen)
+            pygame.display.update()
+
+    def check_match(self, selected_word):
+        return selected_word == self.current_word
+
 
 
 
@@ -248,22 +310,23 @@ def main():
 
         #push text onto main screen
         
-
-
         # Please create your game buttons using the this format
         # game_name_here = Game_Button(pygame.image.load("your_button_icon"),(x,y),"The name of your game here",text_font,"Blue","Green")
         Word_Spell_button = Game_Button(pygame.image.load("button.png"),(200,200),"Word Spell",text_font,"Blue","Green")
         Madlibs_button = Game_Button(pygame.image.load("selly_button.png"),(500,200),"Mad Libs",text_font,"Blue","Green")
+        Word_Match_button = Game_Button(pygame.image.load("zoe_button.png"),(350,400),"Word Match",text_font,"Blue","Green")
         main_screen.blit(menu,menu_rectangle)
 
         #This displays button on screen
         Word_Spell_button.display_button(main_screen)
+        Madlibs_button.display_button(main_screen)
+        Word_Match_button.display_button(main_screen)
 
         #This highlights the button text when the mouse hovers over button
         Word_Spell_button.Highlight_button(position_of_mouse)
-
-        Madlibs_button.display_button(main_screen)
         Madlibs_button.Highlight_button(position_of_mouse)
+        Word_Match_button.Highlight_button(position_of_mouse)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -275,6 +338,8 @@ def main():
                     Word_spell() # this can be erased and replaced with function call
                 if Madlibs_button.check_if_clicked(position_of_mouse):
                     madlibs() # this can be erased and replaced with function call
+                if Word_Match_button.check_if_clicked(position_of_mouse):
+                    WordMatchGame() 
                     
                 else:
                     break
@@ -287,5 +352,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
