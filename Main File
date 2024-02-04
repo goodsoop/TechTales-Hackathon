@@ -1,11 +1,108 @@
-print("Please choose a mode:\nType C for 'Alphabet Ally'\nType V for 'function_v'\nType S for 'function_v'\nType Z for 'function_Z'\n")
-mode = input()
-if mode == "C":
-    Alphabet_Ally()
-if mode == "V":
-    #Vanessa's functio goes here
-if mode == "S":
-    Selorm's function goes here
-if mode == "Z":
-    #Zoe's function goes here
+import pygame
+import time
+import random
+import cv2
+# initialize pygame
+pygame.init()
+
+# screen setup
+screen_width = 800
+screen_height = 600
+main_screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("TechTales")
+text_font = pygame.font.SysFont("Arial",20)
+# colours for the game (can be changed)
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+# Set up fonts
+
+
+
+
+
+class Game_Button():
+	def __init__(self, image, coordinates, game_name, font, button_color, highlight_color):
+		self.image = image
+		self.x_pos = coordinates[0]
+		self.y_pos = coordinates[1]
+		self.font = font
+		self.base_color, self.hovering_color = button_color, highlight_color
+		self.text_input = game_name
+		self.text = self.font.render(self.text_input, True, self.base_color)
+		if self.image is None:
+			self.image = self.text
+		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+
+	def display_button(self, screen):
+		if self.image is not None:
+			screen.blit(self.image, self.rect)
+		screen.blit(self.text, self.text_rect)
+
+	def check_if_clicked(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			return True
+		return False
+
+	def Highlight_button(self, position):
+		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			self.text = self.font.render(self.text_input, True, self.hovering_color)
+		else:
+			self.text = self.font.render(self.text_input, True, self.base_color)
+
+
+
+
+
+
+
+
+
+
+
+def main():
+    running = True
+
+    while running:
+        main_screen.blit(pygame.image.load("Background.png"),(0,0))
+
+        position_of_mouse = pygame.mouse.get_pos()
+
+        menu = text_font.render("Choose a game", True, "#b68f40")
+        menu_rectangle = menu.get_rect(center=(400,100))
+
+        #push text onto main screen
+        main_screen.blit(menu,menu_rectangle)
+
+
+        # Please create your game buttons using the this format
+        # game_name_here = Game_Button(pygame.image.load("your_button_icon"),(x,y),"The name of your game here",text_font,"Blue","Green")
+        game1_button = Game_Button(pygame.image.load("Button.png"),(200,200),"Game1",text_font,"Blue","Green")
+
         
+        #This displays button on screen
+        game1_button.display_button(main_screen)
+
+        #This highlights the button text when the mouse hovers over button
+        game1_button.Highlight_button(position_of_mouse)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #create all if statements for function/game calls
+                if game1_button.check_if_clicked(position_of_mouse):
+                    print('Button clicked')
+                else:
+                    break
+                    # put name of game here
+
+        # update the display
+        pygame.display.update()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
+
